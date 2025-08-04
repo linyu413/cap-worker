@@ -1,6 +1,6 @@
 {
 	"name": "cap-worker",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"private": true,
 	"scripts": {
 		"deploy": "wrangler deploy",
@@ -11,5 +11,8 @@
 	"devDependencies": {
 		"typescript": "^5.5.2",
 		"wrangler": "^4.26.0"
+	},
+	"dependencies": {
+		"@cap.js/server": "^2.0.0"
 	}
 }

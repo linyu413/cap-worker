@@ -3,18 +3,1199 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Hello, World!</title>
+		<title>CAP CAPTCHA Service</title>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<style>
+			:root {
+				--primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				--secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+				--accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+				--dark-gradient: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+				--success-color: #00d4aa;
+				--warning-color: #ff9500;
+				--error-color: #ff5757;
+				--text-primary: #1a202c;
+				--text-secondary: #4a5568;
+				--text-muted: #718096;
+				--bg-primary: #ffffff;
+				--bg-secondary: #f7fafc;
+				--bg-tertiary: #edf2f7;
+				--border-light: #e2e8f0;
+				--shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+				--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+				--shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+				--shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+			}
+
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+			
+			body {
+				font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+				line-height: 1.6;
+				color: var(--text-primary);
+				background: var(--bg-secondary);
+				overflow-x: hidden;
+			}
+
+			/* Animated background */
+			.bg-animated {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: -1;
+				background: var(--primary-gradient);
+				opacity: 0.03;
+			}
+
+			.bg-animated::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 200%;
+				height: 200%;
+				background: 
+					radial-gradient(circle at 25% 25%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+					radial-gradient(circle at 75% 75%, rgba(255, 119, 198, 0.3) 0%, transparent 50%);
+				animation: float 20s ease-in-out infinite;
+			}
+
+			@keyframes float {
+				0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+				50% { transform: translate(-30%, -60%) rotate(180deg); }
+			}
+			
+			.container {
+				max-width: 1400px;
+				margin: 0 auto;
+				padding: 0 20px;
+				position: relative;
+			}
+			
+			.header {
+				text-align: center;
+				padding: 80px 0 60px;
+				position: relative;
+			}
+
+			.header::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 50%;
+				transform: translateX(-50%);
+				width: 100px;
+				height: 4px;
+				background: var(--accent-gradient);
+				border-radius: 2px;
+			}
+			
+			.header h1 {
+				font-size: 3.5rem;
+				font-weight: 700;
+				margin-bottom: 16px;
+				background: var(--primary-gradient);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+				letter-spacing: -0.02em;
+				animation: slideInUp 0.8s ease-out;
+			}
+			
+			.header p {
+				font-size: 1.25rem;
+				color: var(--text-secondary);
+				font-weight: 400;
+				max-width: 600px;
+				margin: 0 auto;
+				animation: slideInUp 0.8s ease-out 0.2s both;
+			}
+
+			@keyframes slideInUp {
+				from {
+					opacity: 0;
+					transform: translateY(30px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+			
+			.content {
+				background: var(--bg-primary);
+				border-radius: 24px;
+				box-shadow: var(--shadow-xl);
+				overflow: hidden;
+				margin-bottom: 40px;
+				border: 1px solid var(--border-light);
+				animation: slideInUp 0.8s ease-out 0.4s both;
+			}
+			
+			.section {
+				padding: 48px;
+				position: relative;
+			}
+			
+			.section:not(:last-child) {
+				border-bottom: 1px solid var(--border-light);
+			}
+
+			.section::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 2px;
+				background: var(--accent-gradient);
+				opacity: 0;
+				transition: opacity 0.3s ease;
+			}
+
+			.section:hover::before {
+				opacity: 1;
+			}
+			
+			.section h2 {
+				color: var(--text-primary);
+				margin-bottom: 24px;
+				font-size: 2rem;
+				font-weight: 600;
+				display: flex;
+				align-items: center;
+				letter-spacing: -0.01em;
+			}
+			
+			.section h2::before {
+				content: '';
+				width: 6px;
+				height: 32px;
+				background: var(--accent-gradient);
+				margin-right: 16px;
+				border-radius: 3px;
+				flex-shrink: 0;
+			}
+
+			.section p {
+				color: var(--text-secondary);
+				font-size: 1.1rem;
+				line-height: 1.7;
+				margin-bottom: 20px;
+			}
+			
+			.feature-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+				gap: 24px;
+				margin-top: 32px;
+			}
+			
+			.feature-card {
+				background: var(--bg-secondary);
+				padding: 32px 28px;
+				border-radius: 16px;
+				border: 1px solid var(--border-light);
+				transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+				position: relative;
+				overflow: hidden;
+			}
+
+			.feature-card::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 4px;
+				background: var(--accent-gradient);
+				transform: translateX(-100%);
+				transition: transform 0.3s ease;
+			}
+
+			.feature-card:hover::before {
+				transform: translateX(0);
+			}
+
+			.feature-card:hover {
+				transform: translateY(-8px);
+				box-shadow: var(--shadow-lg);
+				border-color: transparent;
+			}
+			
+			.feature-card h3 {
+				color: var(--text-primary);
+				margin-bottom: 12px;
+				font-size: 1.25rem;
+				font-weight: 600;
+				display: flex;
+				align-items: center;
+			}
+
+			.feature-card h3::before {
+				content: attr(data-icon);
+				margin-right: 12px;
+				font-size: 1.5rem;
+				background: var(--accent-gradient);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+			}
+
+			.feature-card p {
+				color: var(--text-secondary);
+				font-size: 1rem;
+				line-height: 1.6;
+				margin: 0;
+			}
+			
+			.api-endpoint {
+				background: var(--bg-secondary);
+				border-radius: 16px;
+				padding: 32px;
+				margin-bottom: 24px;
+				border: 1px solid var(--border-light);
+				transition: all 0.3s ease;
+				position: relative;
+				overflow: hidden;
+			}
+
+			.api-endpoint::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 4px;
+				height: 100%;
+				background: var(--success-color);
+			}
+
+			.api-endpoint:hover {
+				transform: translateY(-4px);
+				box-shadow: var(--shadow-md);
+			}
+			
+			.method {
+				display: inline-flex;
+				align-items: center;
+				background: var(--success-color);
+				color: white;
+				padding: 6px 12px;
+				border-radius: 8px;
+				font-size: 0.85rem;
+				font-weight: 600;
+				margin-right: 12px;
+				letter-spacing: 0.5px;
+				box-shadow: var(--shadow-sm);
+			}
+			
+			.endpoint-url {
+				font-family: 'SF Mono', 'Monaco', 'Menlo', 'Consolas', monospace;
+				background: var(--bg-tertiary);
+				color: var(--text-primary);
+				padding: 8px 12px;
+				border-radius: 8px;
+				font-size: 0.95rem;
+				font-weight: 500;
+				border: 1px solid var(--border-light);
+			}
+			
+			.code-block {
+				background: var(--text-primary);
+				color: #e2e8f0;
+				padding: 24px;
+				border-radius: 12px;
+				font-family: 'SF Mono', 'Monaco', 'Menlo', 'Consolas', monospace;
+				font-size: 0.9rem;
+				line-height: 1.6;
+				overflow-x: auto;
+				margin: 16px 0;
+				border: 1px solid #4a5568;
+				position: relative;
+			}
+
+			.code-block::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: 1px;
+				background: var(--accent-gradient);
+			}
+
+			/* Code syntax highlighting */
+			.code-block .string { color: #98d8c8; }
+			.code-block .number { color: #f7dc6f; }
+			.code-block .boolean { color: #bb86fc; }
+			.code-block .null { color: #cf6679; }
+			.code-block .key { color: #82b1ff; }
+			
+			.params {
+				margin-top: 20px;
+				background: var(--bg-primary);
+				padding: 20px;
+				border-radius: 12px;
+				border: 1px solid var(--border-light);
+			}
+
+			.params h4 {
+				color: var(--text-primary);
+				margin-bottom: 16px;
+				font-size: 1.1rem;
+				font-weight: 600;
+			}
+			
+			.param {
+				margin-bottom: 12px;
+				padding: 12px 16px;
+				background: var(--bg-secondary);
+				border-radius: 8px;
+				border-left: 3px solid var(--accent-gradient);
+			}
+			
+			.param-name {
+				font-weight: 600;
+				color: var(--text-primary);
+				font-family: 'SF Mono', 'Monaco', monospace;
+				font-size: 0.9rem;
+			}
+			
+			.param-type {
+				color: var(--text-muted);
+				font-style: italic;
+				font-size: 0.85rem;
+			}
+			
+			.status-badge {
+				display: inline-flex;
+				align-items: center;
+				background: var(--accent-gradient);
+				color: white;
+				padding: 4px 12px;
+				border-radius: 16px;
+				font-size: 0.8rem;
+				font-weight: 500;
+				margin-left: 12px;
+				box-shadow: var(--shadow-sm);
+			}
+
+			.usage-flow {
+				counter-reset: step-counter;
+			}
+
+			.usage-flow li {
+				counter-increment: step-counter;
+				margin-bottom: 16px;
+				padding: 16px 20px;
+				background: var(--bg-secondary);
+				border-radius: 12px;
+				border-left: 4px solid var(--accent-gradient);
+				position: relative;
+				list-style: none;
+			}
+
+			.usage-flow li::before {
+				content: counter(step-counter);
+				position: absolute;
+				left: -12px;
+				top: 16px;
+				width: 24px;
+				height: 24px;
+				background: var(--accent-gradient);
+				color: white;
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 0.8rem;
+				font-weight: 600;
+			}
+
+			.usage-flow li strong {
+				color: var(--text-primary);
+				font-weight: 600;
+			}
+
+			.usage-flow li code {
+				background: var(--bg-tertiary);
+				padding: 2px 6px;
+				border-radius: 4px;
+				font-family: 'SF Mono', monospace;
+				font-size: 0.85rem;
+				color: var(--text-primary);
+			}
+
+			/* Demo Section Styles */
+			.demo-container {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 32px;
+				margin-top: 32px;
+				height: 600px; /* Fixed height to prevent jumping */
+			}
+
+			.demo-section, .integration-section {
+				background: var(--bg-secondary);
+				padding: 28px;
+				border-radius: 16px;
+				border: 1px solid var(--border-light);
+				height: 100%; /* Use full container height */
+				display: flex;
+				flex-direction: column;
+				overflow: hidden; /* Prevent content overflow causing layout shifts */
+			}
+
+			.demo-section h3, .integration-section h3 {
+				color: var(--text-primary);
+				margin-bottom: 20px;
+				font-size: 1.25rem;
+				font-weight: 600;
+				display: flex;
+				align-items: center;
+				flex-shrink: 0; /* Prevent title from shrinking */
+				height: 32px; /* Fixed height for consistency */
+			}
+
+			.demo-widget {
+				text-align: center;
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: flex-start;
+				overflow: hidden;
+			}
+			/* center the captcha widget */
+			.demo-widget-container {
+				flex: 1;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 100%;
+				width: 100%;
+			}
+
+			.captcha-placeholder {
+				height: 220px; /* Fixed height instead of min-height */
+				background: var(--bg-primary);
+				border: 2px dashed var(--border-light);
+				border-radius: 12px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin-bottom: 16px;
+				transition: all 0.3s ease;
+				flex-shrink: 0;
+			}
+
+			.captcha-placeholder:hover {
+				border-color: var(--accent-gradient);
+			}
+
+			.captcha-loading {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 16px;
+				color: var(--text-muted);
+			}
+
+			.loading-spinner {
+				width: 32px;
+				height: 32px;
+				border: 3px solid var(--border-light);
+				border-top: 3px solid transparent;
+				border-radius: 50%;
+				animation: spin 1s linear infinite;
+				background: var(--accent-gradient);
+				-webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0);
+				mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0);
+			}
+
+			@keyframes spin {
+				0% { transform: rotate(0deg); }
+				100% { transform: rotate(360deg); }
+			}
+
+			.demo-status {
+				background: var(--bg-primary);
+				padding: 16px;
+				border-radius: 8px;
+				border: 1px solid var(--border-light);
+				margin-top: auto; /* Push to bottom */
+				flex-shrink: 0;
+				height: 56px; /* Fixed height to prevent jumping */
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.status-message {
+				color: var(--text-secondary);
+				font-size: 0.95rem;
+				text-align: center;
+				margin: 0;
+			}
+
+			.status-success {
+				color: var(--success-color);
+				font-weight: 500;
+			}
+
+			.status-error {
+				color: var(--error-color);
+				font-weight: 500;
+			}
+
+			/* Code Tabs */
+			.code-tabs {
+				border-radius: 12px;
+				overflow: hidden;
+				border: 1px solid var(--border-light);
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				height: 0; /* Force flex child to respect parent constraints */
+				min-height: 0; /* Allow shrinking */
+			}
+
+			.tab-buttons {
+				display: flex;
+				background: var(--bg-tertiary);
+				border-bottom: 1px solid var(--border-light);
+				flex-shrink: 0; /* Prevent buttons from shrinking */
+				height: 48px; /* Fixed height */
+			}
+
+			.tab-btn {
+				flex: 1;
+				padding: 12px 16px;
+				background: none;
+				border: none;
+				color: var(--text-secondary);
+				font-size: 0.9rem;
+				font-weight: 500;
+				cursor: pointer;
+				transition: all 0.2s ease;
+				position: relative;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.tab-btn:hover {
+				background: var(--bg-primary);
+				color: var(--text-primary);
+			}
+
+			.tab-btn.active {
+				background: var(--bg-primary);
+				color: var(--text-primary);
+				font-weight: 600;
+			}
+
+			.tab-btn.active::after {
+				content: '';
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				height: 2px;
+				background: var(--accent-gradient);
+			}
+
+			.tab-content {
+				display: none;
+				background: var(--bg-primary);
+				flex: 1;
+				overflow: hidden;
+				position: relative;
+			}
+
+			.tab-content.active {
+				display: block;
+			}
+
+			.tab-content .code-block {
+				margin: 0;
+				border-radius: 0;
+				border: none;
+				height: 100%;
+				overflow: auto;
+				white-space: pre;
+				display: block;
+				padding: 20px;
+				line-height: 1.5;
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+			}
+
+			/* Integration Features */
+			.integration-features {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 12px;
+				margin-top: 32px;
+				justify-content: center;
+			}
+
+			.feature-pill {
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+				background: var(--bg-primary);
+				padding: 8px 16px;
+				border-radius: 20px;
+				border: 1px solid var(--border-light);
+				font-size: 0.9rem;
+				color: var(--text-secondary);
+				font-weight: 500;
+				transition: all 0.3s ease;
+			}
+
+			.feature-pill:hover {
+				transform: translateY(-2px);
+				box-shadow: var(--shadow-md);
+				border-color: transparent;
+				background: var(--accent-gradient);
+				color: white;
+			}
+
+			.pill-icon {
+				font-size: 1rem;
+			}
+
+			.feature-pill:hover .pill-icon {
+				transform: scale(1.1);
+			}
+
+			/* CAPTCHA Widget Styles */
+			cap-widget {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: calc(100% - 30px);
+				width: 100%;
+				border: 2px solid var(--border-light);
+				border-radius: 12px;
+				padding: 16px;
+				background-image: linear-gradient(to top, #48c6ef 0%, #6f86d6 100%);
+				margin-bottom: 16px;
+				transition: all 0.3s ease;
+			}
+
+			cap-widget:hover {
+				border-color: rgba(79, 172, 254, 0.5);
+				box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.1);
+			}
+
+			.error-list {
+				list-style: none;
+				margin-top: 16px;
+			}
+
+			.error-list li {
+				padding: 12px 16px;
+				margin-bottom: 8px;
+				background: var(--bg-secondary);
+				border-radius: 8px;
+				border-left: 4px solid var(--error-color);
+				transition: all 0.2s ease;
+			}
+
+			.error-list li:hover {
+				background: var(--bg-tertiary);
+			}
+
+			.error-list strong {
+				color: var(--error-color);
+				font-weight: 600;
+			}
+			
+			.footer {
+				text-align: center;
+				color: var(--text-muted);
+				margin: 60px 0 40px;
+				font-size: 1rem;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 8px;
+			}
+
+			.footer::before {
+				content: '⚡';
+				font-size: 1.2rem;
+			}
+
+			/* Scroll indicator */
+			.scroll-indicator {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 4px;
+				background: var(--bg-tertiary);
+				z-index: 1000;
+			}
+
+			.scroll-progress {
+				height: 100%;
+				background: var(--accent-gradient);
+				transition: width 0.1s ease;
+			}
+			
+			@media (max-width: 768px) {
+				.header {
+					padding: 60px 0 40px;
+				}
+				
+				.header h1 {
+					font-size: 2.5rem;
+				}
+
+				.header p {
+					font-size: 1.1rem;
+				}
+				
+				.section {
+					padding: 32px 24px;
+				}
+
+				.section h2 {
+					font-size: 1.5rem;
+				}
+
+				.feature-grid {
+					grid-template-columns: 1fr;
+					gap: 16px;
+				}
+
+				.api-endpoint {
+					padding: 24px;
+				}
+
+				.code-block {
+					padding: 16px;
+					font-size: 0.8rem;
+				}
+
+				/* Demo responsive styles */
+				.demo-container {
+					grid-template-columns: 1fr;
+					gap: 24px;
+					height: auto; /* Allow natural height on mobile */
+				}
+
+				.demo-section, .integration-section {
+					padding: 16px;
+					height: 450px; /* Fixed height for small screens */
+				}
+
+				.captcha-placeholder {
+					height: 140px; /* Smaller but still fixed */
+				}
+
+				.demo-status {
+					height: 44px; /* Consistent with smaller screens */
+				}
+
+				.integration-features {
+					gap: 8px;
+					margin-top: 24px;
+				}
+
+				.feature-pill {
+					font-size: 0.85rem;
+					padding: 6px 12px;
+				}
+			}
+
+			@media (max-width: 480px) {
+				.container {
+					padding: 0 16px;
+				}
+
+				.header h1 {
+					font-size: 2rem;
+				}
+
+				.section {
+					padding: 24px 20px;
+				}
+
+				.demo-section, .integration-section {
+					padding: 16px;
+					min-height: auto;
+				}
+
+				.tab-btn {
+					padding: 10px 12px;
+					font-size: 0.85rem;
+				}
+
+				.captcha-placeholder {
+					min-height: 120px;
+				}
+			}
+		</style>
+		<script src="https://captcha.gurl.eu.org/cap.min.js"></script>
 	</head>
 	<body>
-		<h1 id="heading"></h1>
-		<p>This page comes from a static asset stored at `public/index.html` as configured in `wrangler.jsonc`.</p>
+		<div class="bg-animated"></div>
+		<div class="scroll-indicator">
+			<div class="scroll-progress" id="scrollProgress"></div>
+		</div>
+		
+		<div class="container">
+			<div class="header">
+				<h1>🛡️ CAP CAPTCHA Service</h1>
+				<p>Next-generation CAPTCHA service powered by Cloudflare Workers for global scale and performance</p>
+			</div>
+			
+			<div class="content">
+				<div class="section">
+					<h2>🚀 Live Demo & Integration</h2>
+					<p>Experience CAP CAPTCHA in action and see how easy it is to integrate into your applications with just a few lines of code.</p>
+					
+					<div class="demo-container">
+						<div class="demo-section">
+							<h3>Interactive Demo</h3>
+							<div class="demo-widget">
+								<div class="demo-widget-container">
+									<cap-widget id="cap" data-cap-api-endpoint="https://captcha.gurl.eu.org/api/"></cap-widget>
+								</div>
+								<div class="demo-status" id="demoStatus">
+									<div class="status-message">Complete the CAPTCHA above to see it in action</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="integration-section">
+							<h3>Quick Integration</h3>
+							<div class="code-tabs">
+								<div class="tab-buttons">
+									<button class="tab-btn active" data-tab="html">HTML</button>
+									<button class="tab-btn" data-tab="javascript">JavaScript</button>
+									<button class="tab-btn" data-tab="validation">Validation</button>
+								</div>
+								
+								<div class="tab-content active" data-tab="html">
+									<div class="code-block"><!-- <span class="key">Step 1:</span> Add the script -->
+&lt;<span class="key">script</span> <span class="key">src</span>=<span class="string">"https://captcha.gurl.eu.org/cap.min.js"</span>&gt;&lt;/<span class="key">script</span>&gt;
+
+<!-- <span class="key">Step 2:</span> Add the widget -->
+&lt;<span class="key">cap-widget</span> 
+  <span class="key">id</span>=<span class="string">"cap"</span> 
+  <span class="key">data-cap-api-endpoint</span>=<span class="string">"https://captcha.gurl.eu.org/api/"</span>&gt;
+&lt;/<span class="key">cap-widget</span>&gt;</div>
+								</div>
+								
+								<div class="tab-content" data-tab="javascript">
+									<div class="code-block"><span class="key">const</span> widget = document.querySelector(<span class="string">"#cap"</span>);
+
+widget.addEventListener(<span class="string">"solve"</span>, <span class="key">async function</span> (e) {
+  <span class="key">const</span> token = e.detail.token;
+  
+  <span class="key">// Handle the token as needed</span>
+  console.log(<span class="string">"CAPTCHA solved, token:"</span>, token);
+  
+  <span class="key">// Validate the token server-side</span>
+  <span class="key">const</span> result = <span class="key">await</span> fetch(<span class="string">'https://captcha.gurl.eu.org/api/validate'</span>, {
+    method: <span class="string">'POST'</span>,
+    headers: { <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span> },
+    body: JSON.stringify({ 
+      token: token, 
+      keepToken: <span class="boolean">false</span> 
+    })
+  });
+  
+  <span class="key">const</span> validation = <span class="key">await</span> result.json();
+  console.log(<span class="string">"Validation result:"</span>, validation);
+});</div>
+								</div>
+								
+								<div class="tab-content" data-tab="validation">
+									<div class="code-block"><span class="key">// Server-side validation example (Node.js)</span>
+<span class="key">app.post</span>(<span class="string">'/protected-endpoint'</span>, <span class="key">async</span> (req, res) => {
+  <span class="key">const</span> { captchaToken } = req.body;
+  
+  <span class="key">try</span> {
+    <span class="key">const</span> validation = <span class="key">await</span> fetch(<span class="string">'https://captcha.gurl.eu.org/api/validate'</span>, {
+      method: <span class="string">'POST'</span>,
+      headers: { <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span> },
+      body: JSON.stringify({ 
+        token: captchaToken,
+        keepToken: <span class="boolean">false</span>
+      })
+    });
+    
+    <span class="key">const</span> result = <span class="key">await</span> validation.json();
+    
+    <span class="key">if</span> (result.success) {
+      <span class="key">// CAPTCHA verified, proceed with protected operation</span>
+      res.json({ message: <span class="string">'Access granted'</span> });
+    } <span class="key">else</span> {
+      res.status(<span class="number">400</span>).json({ error: <span class="string">'CAPTCHA verification failed'</span> });
+    }
+  } <span class="key">catch</span> (error) {
+    res.status(<span class="number">500</span>).json({ error: <span class="string">'Validation error'</span> });
+  }
+});</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="integration-features">
+						<div class="feature-pill">
+							<span class="pill-icon">⚡</span>
+							<span>5-minute setup</span>
+						</div>
+						<div class="feature-pill">
+							<span class="pill-icon">📱</span>
+							<span>Private First</span>
+						</div>
+						<div class="feature-pill">
+							<span class="pill-icon">🌍</span>
+							<span>Global CDN</span>
+						</div>
+					</div>
+				</div>
+				
+				<div class="section">
+					<h2>Service Overview</h2>
+					<p>CAP CAPTCHA delivers enterprise-grade bot protection through an intelligent, globally distributed CAPTCHA system. Built on Cloudflare's edge infrastructure, it provides millisecond response times and 99.99% uptime.</p>
+					
+					<div class="feature-grid">
+						<div class="feature-card">
+							<h3 data-icon="🚀">Ultra Performance</h3>
+							<p>Edge-deployed across 250+ cities worldwide with sub-100ms response times and automatic scaling</p>
+						</div>
+						<div class="feature-card">
+							<h3 data-icon="🔒">Enterprise Security</h3>
+							<p>Military-grade encryption with advanced bot detection algorithms and fraud prevention</p>
+						</div>
+						<div class="feature-card">
+							<h3 data-icon="🎯">Developer First</h3>
+							<p>RESTful API design with comprehensive SDKs for all major programming languages</p>
+						</div>
+					</div>
+				</div>
+				
+				<div class="section">
+					<h2>API Reference</h2>
+					<p>Complete API documentation with examples and best practices. All endpoints support JSON and return structured responses.</p>
+					
+					<div class="api-endpoint">
+						<h3>
+							<span class="method">POST</span>
+							<span class="endpoint-url">/api/challenge</span>
+							<span class="status-badge">Generate Challenge</span>
+						</h3>
+						<p>Creates a new CAPTCHA challenge with cryptographically secure tokens and returns challenge data for client rendering.</p>
+						
+						<h4>Request Example:</h4>
+						<div class="code-block">fetch('<span class="string">/api/challenge</span>', {
+  method: '<span class="string">POST</span>',
+  headers: {
+    '<span class="key">Content-Type</span>': '<span class="string">application/json</span>'
+  }
+})</div>
+						
+						<h4>Response Example:</h4>
+						<div class="code-block">{
+  "<span class="key">token</span>": "<span class="string">785975238a3c4f0c1b0c39ed75e6e4cc152436cc0d94363de6</span>",
+  "<span class="key">challenge</span>": "<span class="string">{ "c": 50, "s": 32, "d": 4 }</span>",
+  "<span class="key">expires</span>": <span class="number">1753924498818</span>
+}</div>
+					</div>
+					
+					<div class="api-endpoint">
+						<h3>
+							<span class="method">POST</span>
+							<span class="endpoint-url">/api/redeem</span>
+							<span class="status-badge">Verify Solution</span>
+						</h3>
+						<p>Validates user-submitted CAPTCHA solution and returns verification token for subsequent API calls.</p>
+						
+						<div class="params">
+							<h4>Request Parameters:</h4>
+							<div class="param">
+								<span class="param-name">token</span> 
+								<span class="param-type">(string, required)</span> - Challenge token from /api/challenge
+							</div>
+							<div class="param">
+								<span class="param-name">solutions</span> 
+								<span class="param-type">(number[], required)</span> - Array of user solution indices
+							</div>
+						</div>
+						
+						<h4>Request Example:</h4>
+						<div class="code-block">fetch('<span class="string">/api/redeem</span>', {
+  method: '<span class="string">POST</span>',
+  headers: {
+    '<span class="key">Content-Type</span>': '<span class="string">application/json</span>'
+  },
+  body: JSON.stringify({
+    <span class="key">token</span>: '<span class="string">c6bd7fd0bea728b5405f0e3637dca6d1b88aaf33589809a103</span>',
+    <span class="key">solutions</span>: [<span class="number">1</span>, <span class="number">3</span>, <span class="number">7</span>]
+  })
+})</div>
+						
+						<h4>Response Example:</h4>
+						<div class="code-block">{
+  "<span class="key">success</span>": <span class="boolean">true</span>,
+  "<span class="key">token</span>": "<span class="string">785975238a3c4f0c1b0c39:ed75e6e4cc152436cc0d94363de6</span>",
+}</div>
+					</div>
+					
+					<div class="api-endpoint">
+						<h3>
+							<span class="method">POST</span>
+							<span class="endpoint-url">/api/validate</span>
+							<span class="status-badge">Token Validation</span>
+						</h3>
+						<p>Validates previously issued tokens and optionally consumes them for one-time use scenarios.</p>
+						
+						<div class="params">
+							<h4>Request Parameters:</h4>
+							<div class="param">
+								<span class="param-name">token</span> 
+								<span class="param-type">(string, required)</span> - Verification token to validate
+							</div>
+							<div class="param">
+								<span class="param-name">keepToken</span> 
+								<span class="param-type">(boolean, optional)</span> - Preserve token for reuse (default: false)
+							</div>
+						</div>
+						
+						<h4>Request Example:</h4>
+						<div class="code-block">fetch('<span class="string">/api/validate</span>', {
+  method: '<span class="string">POST</span>',
+  headers: {
+    '<span class="key">Content-Type</span>': '<span class="string">application/json</span>'
+  },
+  body: JSON.stringify({
+    <span class="key">token</span>: '<span class="string">785975238a3c4f0c1b0c39:ed75e6e4cc152436cc0d94363de6</span>',
+    <span class="key">keepToken</span>: <span class="boolean">false</span>
+  })
+})</div>
+						
+						<h4>Response Example:</h4>
+						<div class="code-block">{
+  "<span class="key">success</span>": <span class="boolean">true</span>
+}</div>
+					</div>
+				</div>
+				
+				<div class="section">
+					<h2>Integration Guide</h2>
+					<ol class="usage-flow">
+						<li><strong>Generate Challenge</strong>: Request a new CAPTCHA via <code>/api/challenge</code> endpoint</li>
+						<li><strong>Render UI</strong>: Display the challenge content in your frontend using our SDK or custom implementation</li>
+						<li><strong>Collect Solution</strong>: Capture user interaction and prepare solution array</li>
+						<li><strong>Verify Response</strong>: Submit solution via <code>/api/redeem</code> for server-side validation</li>
+						<li><strong>Token Usage</strong>: Use returned token for protected operations via <code>/api/validate</code></li>
+					</ol>
+				</div>
+				
+				<div class="section">
+					<h2>Error Handling</h2>
+					<p>Our API follows REST conventions with detailed error responses and appropriate HTTP status codes:</p>
+					<ul class="error-list">
+						<li><strong>400 Bad Request</strong>: Malformed request body or missing required parameters</li>
+						<li><strong>401 Unauthorized</strong>: Invalid or expired authentication credentials</li>
+						<li><strong>404 Not Found</strong>: Requested endpoint or resource doesn't exist</li>
+						<li><strong>429 Too Many Requests</strong>: Rate limit exceeded, retry with exponential backoff</li>
+						<li><strong>500 Internal Server Error</strong>: Temporary server issue, safe to retry</li>
+					</ul>
+				</div>
+			</div>
+			
+			<div class="footer">
+				Powered by Cloudflare Workers & @cap.js/server
+			</div>
+		</div>
+
 		<script>
-			fetch('/message')
-				.then((resp) => resp.text())
-				.then((text) => {
-					const h1 = document.getElementById('heading');
-					h1.textContent = text;
+			// Scroll progress indicator
+			window.addEventListener('scroll', () => {
+				const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+				document.getElementById('scrollProgress').style.width = scrolled + '%';
+			});
+
+			// Add hover effects to code blocks
+			document.querySelectorAll('.code-block').forEach(block => {
+				block.addEventListener('mouseenter', () => {
+					block.style.transform = 'translateY(-2px)';
+					block.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
 				});
+				
+				block.addEventListener('mouseleave', () => {
+					block.style.transform = 'translateY(0)';
+					block.style.boxShadow = 'none';
+				});
+			});
+
+			// CAPTCHA Demo Initialization
+			document.addEventListener('DOMContentLoaded', function() {
+				const widget = document.querySelector("#cap");
+				
+				if (widget) {
+					widget.addEventListener("solve", async function (e) {
+						const token = e.detail.token;
+						console.log('CAPTCHA solved, token:', token);
+
+						try {
+							const result = await fetch('https://captcha.gurl.eu.org/api/validate', {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify({
+									token: token,
+									keepToken: false
+								})
+							});
+							const validation = await result.json();
+							console.log('Validation result:', validation);
+
+							if (validation.success) {
+								document.getElementById('demoStatus').innerHTML = '<div class="status-message status-success">✅ CAPTCHA verified successfully!</div>';
+							} else {
+								document.getElementById('demoStatus').innerHTML = '<div class="status-message status-error">❌ CAPTCHA verification failed.</div>';
+							}
+						} catch (error) {
+							console.error('Validation error:', error);
+							document.getElementById('demoStatus').innerHTML = '<div class="status-message status-error">❌ Validation error occurred.</div>';
+						}
+					});
+
+					widget.addEventListener("error", function (e) {
+						console.error('CAPTCHA error:', e.detail);
+						document.getElementById('demoStatus').innerHTML = '<div class="status-message status-error">❌ CAPTCHA loading error.</div>';
+					});
+				}
+			});
+
+			// Tab switching functionality
+			document.querySelectorAll('.tab-btn').forEach(button => {
+				button.addEventListener('click', () => {
+					const targetTab = button.dataset.tab;
+					document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+					document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+					button.classList.add('active');
+					document.querySelector(`.tab-content[data-tab="${targetTab}"]`).classList.add('active');
+				});
+			});
 		</script>
 	</body>
 </html>
